@@ -203,7 +203,7 @@ p+p{margin-top:14px}
       <h1><em>50</em> receitas fáceis para quem usa Mounjaro<sup style="font-size:.4em">®</sup></h1>
       <p class="sub">Comida brasileira de verdade, <b>em porções que cabem no seu novo apetite</b>: leve, cheia de proteína e pronta em minutos. Tem cuscuz, tapioca, PF, strogonoff, moqueca e brigadeiro.</p>
       <a class="cta" href="#oferta">Quero as 50 receitas<small>Acesso imediato · PDF para celular e computador</small></a>
-      <div class="selos"><span>Garantia de 7 dias</span><span>Pix ou até 12x no cartão</span><span>Receitas com foto</span></div>
+      <div class="selos"><span>Garantia de 7 dias</span><span>Pix ou até <span class="n-parc">8</span>x no cartão</span><span>Receitas com foto</span></div>
     </div>
     <div class="livro"><img src="img/capa.jpg" alt="Capa do livro 50 Receitas Fáceis para Quem Usa Mounjaro" width="900" height="1273"></div>
   </div>
@@ -345,7 +345,7 @@ p+p{margin-top:14px}
       </ul>
       <div class="de" id="rotulo-preco">Preço de lançamento</div>
       <div class="por" id="preco-principal"><small>R$</small><span class="p-num">37</span></div>
-      <div class="parc" id="preco-secundario">à vista no Pix · ou em até 12x no cartão</div>
+      <div class="parc" id="preco-secundario">à vista no Pix · ou em até <span class="n-parc">8</span>x no cartão</div>
       <div class="lote" id="caixa-lote" hidden>Este preço vale até <b class="fim-data"></b>. Depois, passa para <b class="p-depois"></b>.</div>
       <!-- o link do checkout é definido em CONFIG, no script do fim da página -->
       <a class="cta" id="link-checkout" href="#">Quero as 50 receitas agora<small>Acesso imediato no seu e-mail</small></a>
@@ -421,11 +421,13 @@ var CONFIG = {
   MINUTOS_VISITA: 40,
   FIM_LOTE: "2026-10-05T23:59:00-03:00",
   PRECO_AVISTA: 37,
-  PARCELA_12X: "",
+  PARCELAS: 8,             // máximo de parcelas que a Kiwify libera para R$ 37
+  PARCELA_12X: "5,38",     // valor exato da parcela no checkout (8x de R$ 5,38)
   PRECO_DEPOIS: 47,
-  PARCELA_DEPOIS: "",
-  CHECKOUT_PROMO: "https://SEU-LINK-DE-CHECKOUT-37",
-  CHECKOUT_NORMAL: "https://SEU-LINK-DE-CHECKOUT-47"
+  PARCELAS_DEPOIS: 11,     // R$ 47 parcela em até 11x
+  PARCELA_DEPOIS: "5,22",
+  CHECKOUT_PROMO: "https://pay.kiwify.com.br/OX1HIam",
+  CHECKOUT_NORMAL: "https://pay.kiwify.com.br/06m8Y7B"
 };
 (function () {
   var brl = function (v) { return "R$ " + String(v).replace(".", ","); };
@@ -442,7 +444,9 @@ var CONFIG = {
   var encerrado = fim && !lote;
   var preco = encerrado ? CONFIG.PRECO_DEPOIS : CONFIG.PRECO_AVISTA;
   var parcela = encerrado ? CONFIG.PARCELA_DEPOIS : CONFIG.PARCELA_12X;
+  var nParc = encerrado ? CONFIG.PARCELAS_DEPOIS : CONFIG.PARCELAS;
   var q = function (sel) { return document.querySelectorAll(sel); };
+  q(".n-parc").forEach(function (el) { el.textContent = nParc; });
   q(".p-avista, .p-curto").forEach(function (el) { el.textContent = brl(preco); });
   q(".p-depois").forEach(function (el) { el.textContent = brl(CONFIG.PRECO_DEPOIS); });
   document.getElementById("link-checkout").href = encerrado ? CONFIG.CHECKOUT_NORMAL : CONFIG.CHECKOUT_PROMO;
@@ -485,9 +489,9 @@ var CONFIG = {
   if (parcela) {
     // parcela em destaque, à vista embaixo
     principal.className = "parc-grande";
-    principal.innerHTML = "<small>12x de </small>R$ " + parcela;
+    principal.innerHTML = "<small>" + nParc + "x de </small>R$ " + parcela;
     sec.textContent = "ou " + brl(preco) + " à vista no Pix";
-    q(".p-curto").forEach(function (el) { el.textContent = "12x de R$ " + parcela; });
+    q(".p-curto").forEach(function (el) { el.textContent = nParc + "x de R$ " + parcela; });
   } else {
     principal.querySelector(".p-num").textContent = preco;
   }
